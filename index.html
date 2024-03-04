@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donation Widget</title>
+    <style>
+        /* CSS for the donation widget */
+        .donation-widget {
+            border: 2px solid #f0f0f0;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            max-width: 400px;
+            margin: 20px auto;
+            background-color: #fff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .donation-widget h2 {
+            font-size: 26px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .donation-widget p {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .donation-widget label {
+            display: block;
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .donation-widget select,
+        .donation-widget input[type="number"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        #custom-amount {
+            display: none;
+        }
+
+        #donate-btn {
+            background-color: lightgrey;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.5s;
+        }
+
+        #donate-btn:hover {
+            background-color: pink;
+        }
+    </style>
+</head>
+<body>
+    <div class="donation-widget">
+        <h2>Support Breast Cancer Research</h2>
+        <p>Your contribution can make a difference!</p>
+        <label for="donation-amount">Select Donation Amount:</label>
+        <select id="donation-amount">
+            <option value="10">$10</option>
+            <option value="20">$20</option>
+            <option value="50">$50</option>
+            <option value="100">$100</option>
+            <option value="custom">Enter Custom Amount</option>
+        </select>
+        <input type="number" id="custom-amount" placeholder="Enter custom amount">
+        <button id="donate-btn">Donate</button>
+    </div>
+
+    <script>
+        const donateBtn = document.getElementById("donate-btn");
+        const donationAmountSelect = document.getElementById("donation-amount");
+        const customAmountInput = document.getElementById("custom-amount");
+
+        // Function to handle donation submission
+        const donate = () => {
+            let amount;
+            if (donationAmountSelect.value === "custom") {
+                amount = parseFloat(customAmountInput.value);
+            } else {
+                amount = parseFloat(donationAmountSelect.value);
+            }
+
+            if (isNaN(amount) || amount <= 0) {
+                alert("Please enter a valid donation amount.");
+                return;
+            }
+
+            // Make an HTTP request to your backend with the donation amount
+            // Replace 'http://localhost:3000/donate' with your actual backend URL
+            fetch('http://localhost:3000/donate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ amount }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message); // Display the response message
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again later.');
+            });
+        };
+
+        // Event listener for the donate button
+        donateBtn.addEventListener("click", donate);
+
+        // Event listener for the donation amount select
+        donationAmountSelect.addEventListener("change", () => {
+            if (donationAmountSelect.value === "custom") {
+                customAmountInput.style.display = "block";
+            } else {
+                customAmountInput.style.display = "none";
+            }
+        });
+
+        // Ensure custom amount input is initially hidden
+        customAmountInput.style.display = "none";
+    </script>
+</body>
+</html>
